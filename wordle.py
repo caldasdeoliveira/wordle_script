@@ -60,7 +60,6 @@ class Agent:
     
     def remove_words_with_letter(self, letter: str,):
         self.words = {w for w in self.words if letter not in w}
-        #self.alphabet.remove(letter) #maybe remove
     
     def remove_words_correct_letter_in_wrong_spot(self, letter: str, loc: int,):
         """
@@ -104,9 +103,7 @@ from main import Agent
 
 a = Agent()
 
-# +
-#a.manual_game()
-# -
+a.manual_game()
 
 # # Testing
 
