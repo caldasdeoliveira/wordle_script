@@ -205,7 +205,7 @@ from test import Tester
 a = Agent()
 t = Tester(a)
 
-t.single_test()
+t.single_test("cater")
 
 t.full_test()
 

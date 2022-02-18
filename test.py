@@ -2,7 +2,7 @@ import os
 import string
 import pandas as pd
 from typing import List, Type
-from main import Agent
+from agent import Agent
 import random
 
 from ipywidgets import IntProgress
@@ -45,7 +45,7 @@ class Tester:
             assert len(word) == 5, f"Test words must have lenght 5. {word} has length {len(word)}"
             assert set([word]) <= self.words, f"Test word not in word list consider adding." \
                                             " Agent won't guess words outside the word list"
-        # test if agent has correct method
+        # TODO: test if agent has correct methods
         history = []
         self.agent.reset()
         success = False
