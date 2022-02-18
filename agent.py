@@ -2,6 +2,7 @@ import os
 import string
 import pandas as pd
 from typing import List
+from collections import Counter
 
 class Agent:
     def __init__(self, filename: str = "5LetterWords.txt",):
@@ -39,21 +40,26 @@ class Agent:
         assert len(guess) == 5, "Guess must have length 5"
         assert set(result) <= {0,1,2}, "Invalid values in result"
         
+        seen_letters = dict.fromkeys(guess,0)
         for i,r in enumerate(result):
             if r == 0:
-               self.remove_words_with_letter(letter = guess[i])
+               self.remove_words_with_letter(letter = guess[i], previous_occurrences = seen_letters[guess[i]])
             elif r == 1:
                 self.remove_words_correct_letter_in_wrong_spot(letter = guess[i], loc=i)
             elif r == 2:
                 self.remove_words_correct_letter_in_correct_spot(letter = guess[i], loc=i)
             else:
                 raise  ValueError("Result had unknown value that eluded the assert")
+            seen_letters[guess[i]]+=1
     
     def remove_word_from_words(self, word: str,): #might be unnecessary
         self.words.remove(word)
     
-    def remove_words_with_letter(self, letter: str,):
-        self.words = {w for w in self.words if letter not in w}
+    def remove_words_with_letter(self, letter: str, previous_occurrences: int = 0):
+        if previous_occurrences > 0:
+            self.words = {w for w in self.words if Counter(w)[letter] == previous_occurrences}
+        else:
+            self.words = {w for w in self.words if letter not in w}
     
     def remove_words_correct_letter_in_wrong_spot(self, letter: str, loc: int,):
         """
@@ -73,12 +79,9 @@ class Agent:
         assert self.words, "Word list is empty"
         
         df = pd.DataFrame([list(l) for l in self.words])
-        scores = {}
-        for c in df.columns:
-            scores[c] = df[c].value_counts()
-        scores_df = pd.DataFrame(scores)
+        scores_df = df.apply(pd.Series.value_counts)
         
-        word_scores = {w: 0 for w in self.words}
+        word_scores = dict.fromkeys(self.words,0) #{w: 0 for w in self.words}
         for word in word_scores:
             seen_letters = []
             for i,w in enumerate(word):
